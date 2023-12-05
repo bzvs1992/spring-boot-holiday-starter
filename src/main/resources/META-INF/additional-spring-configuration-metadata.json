@@ -1,0 +1,29 @@
+{"groups": [
+  {
+    "name": "holiday",
+    "type": "cn.bzvs.holiday.autoconfigure.properties.HolidayProperties",
+    "sourceType": "cn.bzvs.holiday.autoconfigure.properties.HolidayProperties"
+  }
+],"properties": [
+  {
+    "name": "holiday.type",
+    "type": "java.lang.String",
+    "defaultValue": "network",
+    "description": "设置节假日数据源类型， network：在线获取；local:本地Json文件获取.",
+    "sourceType": "cn.bzvs.holiday.autoconfigure.properties.HolidayProperties"
+  },
+  {
+    "name": "holiday.years",
+    "type": "java.util.Set",
+    "description": "配置 在线获取 模式下，数据获取的年份.",
+    "sourceType": "cn.bzvs.holiday.autoconfigure.properties.HolidayProperties",
+    "defaultValue":  []
+  },
+  {
+    "name": "holiday.path",
+    "type": "java.lang.String",
+    "description": "设置本地Json文件地址，注：在线获取 模式下，本配置无效.",
+    "sourceType": "cn.bzvs.holiday.autoconfigure.properties.HolidayProperties",
+    "defaultValue": "/config/holiday.json"
+  }
+]}
