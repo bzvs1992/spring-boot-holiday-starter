@@ -10,6 +10,13 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 节假日相关的日历修复服务
+ *
+ * @author bzvs
+ * @date 2024/12/06
+ * @since 1.0.0
+ */
 @Slf4j
 public class HolidayFixService {
 
@@ -20,8 +27,8 @@ public class HolidayFixService {
     /**
      * 构建函数
      *
-     * @param properties
-     * @param resourceLoader
+     * @param properties 配置
+     * @param resourceLoader 资源加载Loader
      */
     public HolidayFixService(HolidayProperties properties, ResourceLoader resourceLoader) {
         this.properties = properties;
@@ -31,24 +38,20 @@ public class HolidayFixService {
 
     /**
      * 数据重置并刷新
-     *
-     * @return
      */
-    public boolean reset() {
+    public void reset() {
         try {
             HolidayUtil.setHolidayData(properties, resourceLoader);
         } catch (Exception e) {
             log.error("数据重置失败", e);
-            return false;
         }
-        return true;
     }
 
     /**
      * 修复缓存数据
      *
-     * @param file
-     * @return
+     * @param file JSON文件
+     * @return boolean
      */
     public boolean fix(File file) {
         return HolidayFix.fix(file);
@@ -57,8 +60,8 @@ public class HolidayFixService {
     /**
      * 修复缓存数据
      *
-     * @param json
-     * @return
+     * @param json JSON数据
+     * @return boolean
      */
     public boolean fix(String json) {
         return HolidayFix.fix(json);
@@ -67,8 +70,8 @@ public class HolidayFixService {
     /**
      * 修复缓存数据
      *
-     * @param calendarVOList
-     * @return
+     * @param calendarVOList 对象列表
+     * @return boolean
      */
     public boolean fix(List<CalendarVO> calendarVOList) {
         return HolidayFix.fix(calendarVOList);
@@ -77,8 +80,8 @@ public class HolidayFixService {
     /**
      * 修复缓存数据并更新本地JSON文件
      *
-     * @param file
-     * @return
+     * @param file JSON文件
+     * @return boolean
      */
     public boolean fix(File file, boolean updateFile) {
         return HolidayFix.fix(file, updateFile);
@@ -87,8 +90,8 @@ public class HolidayFixService {
     /**
      * 修复缓存数据并更新本地JSON文件
      *
-     * @param json
-     * @return
+     * @param json JSON数据
+     * @return boolean
      */
     public boolean fix(String json, boolean updateFile) {
         return HolidayFix.fix(json, updateFile);
@@ -97,8 +100,8 @@ public class HolidayFixService {
     /**
      * 修复缓存数据并更新本地JSON文件
      *
-     * @param calendarVOList
-     * @return
+     * @param calendarVOList 对象列表
+     * @return boolean
      */
     public boolean fix(List<CalendarVO> calendarVOList, boolean updateFile) {
         return HolidayFix.fix(calendarVOList, updateFile);
@@ -106,7 +109,7 @@ public class HolidayFixService {
 
     /**
      * 更新 JSON 文件数据
-     * @return
+     * @return boolean
      */
     public boolean updateFile() {
         return HolidayFix.updateFile();

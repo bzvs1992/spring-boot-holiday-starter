@@ -17,25 +17,50 @@ import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
+/**
+ * 组件自动配置
+ *
+ * @author bzvs
+ * @date 2024/12/04
+ * @since 1.0.0
+ */
 @Slf4j
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(HolidayProperties.class)
 public class HolidayAutoConfiguration implements InitializingBean {
 
+    /**
+     * 配置对象
+     */
     private final HolidayProperties properties;
 
+    /**
+     * 资源加载Loader
+     */
     private final ResourceLoader resourceLoader;
 
+    /**
+     * 应用程序上下文工具类
+     * @return ApplicationContextUtil
+     */
     @Bean
     public ApplicationContextUtil applicationContextUtil() {
         return new ApplicationContextUtil();
     }
 
+    /**
+     * 节假日相关的日历服务
+     * @return HolidayService
+     */
     @Bean
     public HolidayService holidayService() {
         return new HolidayService();
     }
 
+    /**
+     * 节假日相关的日历修复服务
+     * @return HolidayFixService
+     */
     @Bean
     public HolidayFixService holidayFixService() {
         return new HolidayFixService(properties, resourceLoader);

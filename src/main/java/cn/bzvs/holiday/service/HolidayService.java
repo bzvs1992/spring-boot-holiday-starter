@@ -12,6 +12,13 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * 节假日相关的日历服务
+ *
+ * @author bzvs
+ * @date 2024/12/06
+ * @since 1.0.0
+ */
 public class HolidayService {
 
     private static final String format = "yyyy-MM-dd";
@@ -46,7 +53,7 @@ public class HolidayService {
     }
     /**
      * 获取指定日期的节假日信息
-     * @param date
+     * @param date 日期格式：yyyy-MM-dd
      * @return HolidayVO
      */
     public CalendarInfoVO getDate(String date) {

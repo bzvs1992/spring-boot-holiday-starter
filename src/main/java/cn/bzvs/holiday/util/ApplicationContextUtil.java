@@ -7,6 +7,10 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * 获取spring中的bean对象工具类
+ *
+ * @author bzvs
+ * @date 2024/12/06
+ * @since 1.0.0
  */
 public class ApplicationContextUtil implements ApplicationContextAware {
 

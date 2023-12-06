@@ -43,7 +43,7 @@ public class HolidayUtil {
      * 获取多年的日历数据
      *
      * @param years
-     * @return
+     * @return List<CalendarVO>
      */
     public static List<CalendarVO> getYears(@NonNull Set<Integer> years) {
         List<CalendarVO> calendarVOList = new ArrayList<>();
@@ -59,7 +59,7 @@ public class HolidayUtil {
      * 获取某年的日历数据
      *
      * @param year
-     * @return
+     * @return List<CalendarVO>
      */
     public static List<CalendarVO> getYear(int year) {
         List<CalendarVO> calendarVOList = new ArrayList<>();
@@ -74,7 +74,7 @@ public class HolidayUtil {
      *
      * @param year
      * @param month
-     * @return
+     * @return List<CalendarVO>
      */
     public static List<CalendarVO> getMonth(int year, int month) {
         List<CalendarVO> calendarVOList = new ArrayList<>();
@@ -105,7 +105,7 @@ public class HolidayUtil {
      *
      * @param year
      * @param month
-     * @return
+     * @return List<CalendarVO>
      */
     public static String getMonthStr(int year, int month) {
         String result = "fail";

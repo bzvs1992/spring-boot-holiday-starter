@@ -15,13 +15,16 @@
 
 ## 前言
 
--  由于项目原因，在一些场景下需要判断是否是节假日，所以写了一个工具类，方便使用。
+-  由于项目原因，服务器无网络访问权限，在一些场景下需要判断是否是节假日，所以写了一个工具类，方便使用。
 -  开源不易，点个 star 鼓励一下吧！
 
 
 ## 介绍
 
 **Spring-boot-holiday-starter** 一个轻量级节假日判断的小工具，主要解决：获取节假日数据 和 判断是否是节假日。
+- 支持说明
+  - spirngboot 2.7 +
+  - jdk17 +
 
 ## 使用
 -  yml 配置
@@ -49,3 +52,14 @@ holiday:
   - updateFile 方法： 更新JSON文件数据
 
 注：JSON文件可通过 GenerateHolidayTest 进行生成, 示例可参考 HolidayTest
+
+## 计划
+### springboot
+- [ ] 自动解析官方《节假日安排的通知》，提供多种在线解析方式
+- [ ] 支持redis
+- [ ] 支持mysql
+- [ ] 支持minio
+- [ ] 支持mongodb
+
+### solon
+- [ ] 支持solon
