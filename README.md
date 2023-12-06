@@ -4,6 +4,8 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Spring-boot-holiday-starter v1.0.0</h1>
 <h4 align="center">一个轻量级节假日判断的小工具！</h4>
 <p align="center">
+<a href="https://gitee.com/bzvs_team/spring-boot-holiday-stater/stargazers"><img src="https://gitee.com/bzvs_team/spring-boot-holiday-stater/badge/star.svg"></a>
+	<a href="https://gitee.com/bzvs_team/spring-boot-holiday-stater/members"><img src="https://gitee.com/bzvs_team/spring-boot-holiday-stater/badge/fork.svg"></a>
 	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater"><img src="https://img.shields.io/github/stars/bzvs1992/spring-boot-holiday-stater?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater/network/members"><img src="https://img.shields.io/github/forks/bzvs1992/spring-boot-holiday-stater?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater/watchers"><img src="https://img.shields.io/github/watchers/bzvs1992/spring-boot-holiday-stater?style=flat-square&logo=GitHub"></a>
