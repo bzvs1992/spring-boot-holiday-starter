@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.bzvs</groupId>
-    <artifactId>spring-boot-holiday-stater</artifactId>
+    <artifactId>spring-boot-holiday-starter</artifactId>
     <version>1.0.0</version>
-    <name>spring-boot-holiday-stater</name>
-    <description>spring-boot-holiday-stater</description>
+    <name>spring-boot-holiday-starter</name>
+    <description>spring-boot-holiday-starter</description>
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
