@@ -1,18 +1,30 @@
 package cn.bzvs.holiday.util;
 
+import cn.bzvs.holiday.autoconfigure.ConstantData;
+import cn.bzvs.holiday.autoconfigure.properties.HolidayProperties;
 import cn.bzvs.holiday.entity.dto.AlmanacDTO;
 import cn.bzvs.holiday.entity.vo.CalendarVO;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 节假日工具类
@@ -145,6 +157,43 @@ public class HolidayUtil {
                 return 6;
             }
             default -> throw new IllegalStateException("Unexpected value: " + day);
+        }
+    }
+
+    public static void setHolidayData(HolidayProperties properties, ResourceLoader resourceLoader) throws Exception {
+        List<CalendarVO> calendarVOList;
+        String result;
+        // 本地模式
+        if (properties.getType().equals("local")) {
+            // 使用外部 JSON 文件数据
+            if (FileUtil.exist(properties.getPath())) {
+                result = FileUtil.readString(properties.getPath(), StandardCharsets.UTF_8);
+            }
+            // 使用内部 JSON 文件数据
+            else {
+                Resource resource = resourceLoader.getResource(properties.getPath());
+                InputStream inputStream = resource.getInputStream();
+                result = new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining(System.lineSeparator()));
+            }
+            Assert.state(StringUtils.hasText(result),
+                    "If the data is empty, please configure the data");
+            calendarVOList = JSON.parseArray(result, CalendarVO.class);
+        }
+        // 在线模式
+        else {
+            Set<Integer> years = new HashSet<>();
+            if (properties.getYears() != null && !properties.getYears().isEmpty()) {
+                years = properties.getYears();
+            }
+            int year = LocalDate.now().getYear();
+            years.add(year);
+            calendarVOList = HolidayUtil.getYears(years);
+        }
+
+        if (calendarVOList != null && !calendarVOList.isEmpty()) {
+            ConstantData.init(calendarVOList);
+        } else {
+            log.warn("节假日数据初始化失败");
         }
     }
 }
