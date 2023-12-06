@@ -4,8 +4,6 @@ import cn.bzvs.holiday.autoconfigure.properties.HolidayProperties;
 import cn.bzvs.holiday.entity.vo.CalendarVO;
 import cn.bzvs.holiday.util.HolidayFix;
 import cn.bzvs.holiday.util.HolidayUtil;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ResourceLoader;
 
@@ -13,7 +11,6 @@ import java.io.File;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 public class HolidayFixService {
 
     private final HolidayProperties properties;
@@ -21,10 +18,14 @@ public class HolidayFixService {
     private final ResourceLoader resourceLoader;
 
     /**
-     * 初始化
+     * 构建函数
+     *
+     * @param properties
+     * @param resourceLoader
      */
-    @PostConstruct
-    public void init() {
+    public HolidayFixService(HolidayProperties properties, ResourceLoader resourceLoader) {
+        this.properties = properties;
+        this.resourceLoader = resourceLoader;
         reset();
     }
 
@@ -101,5 +102,13 @@ public class HolidayFixService {
      */
     public boolean fix(List<CalendarVO> calendarVOList, boolean updateFile) {
         return HolidayFix.fix(calendarVOList, updateFile);
+    }
+
+    /**
+     * 更新 JSON 文件数据
+     * @return
+     */
+    public boolean updateFile() {
+        return HolidayFix.updateFile();
     }
 }

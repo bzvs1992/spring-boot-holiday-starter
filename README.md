@@ -13,7 +13,7 @@
 
 ---
 
-## 前言：
+## 前言
 
 -  由于项目原因，在一些场景下需要判断是否是节假日，所以写了一个工具类，方便使用。
 -  开源不易，点个 star 鼓励一下吧！
@@ -33,8 +33,19 @@ holiday:
   years:
     - 2020
     - 2021
-  ## 节假日数据源地址
+  ## 节假日数据源地址，优先获取系统路径，不存在情况下，再使用 resources 路径
   path: /config/holiday.json
 ```
----
-    注：JSON文件可通过 GenerateHolidayTest 进行生成, 示例可参考 HolidayTest
+
+- HolidayService 接口（用于 获取日历数据 及 节假日/工作日/补班/周末 判断）
+  - getDate 方法： 获取日历数据
+  - isHoliday 方法： 是否是节假日
+  - isWorkDay 方法： 是否是工作日或补班
+  - isWeekend 方法： 是否是周末
+
+- HolidayFixService 接口 （用于修复日历数据及本地模式下更新JSON文件）
+  - reset 方法： 数据重置并刷新
+  - fix 方法：修复缓存数据
+  - updateFile 方法： 更新JSON文件数据
+
+注：JSON文件可通过 GenerateHolidayTest 进行生成, 示例可参考 HolidayTest

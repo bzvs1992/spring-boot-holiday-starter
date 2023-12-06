@@ -142,17 +142,25 @@ public class HolidayFix {
             return false;
         }
         if (updateFile) {
-            HolidayProperties holidayProperties = (HolidayProperties) ApplicationContextUtil.getBean(HolidayProperties.class);
-            if ("local".equals(holidayProperties.getType()) && StringUtils.hasText(holidayProperties.getPath())) {
-                if (FileUtil.exist(holidayProperties.getPath())) {
-                    FileUtil.writeString(JSON.toJSONString(ConstantData.getAllDateMap()), holidayProperties.getPath(), StandardCharsets.UTF_8);
-                } else {
-                    log.warn("文件更新失败，Jar内部JSON文件数据不可更改，请配置外部JSON文件");
-                }
-            } else {
-                log.warn("文件更新失败，请检查配置文件，type 或 path 配置错误, type: {}  path: {}", holidayProperties.getType(), holidayProperties.getPath());
-            }
+            return updateFile();
         }
-        return true;
+        return false;
+    }
+
+    /**
+     * 更新 JSON 文件
+     * @return
+     */
+    public static boolean updateFile() {
+        HolidayProperties holidayProperties = (HolidayProperties) ApplicationContextUtil.getBean(HolidayProperties.class);
+        if ("local".equals(holidayProperties.getType()) && StringUtils.hasText(holidayProperties.getPath())) {
+            if (FileUtil.exist(holidayProperties.getPath())) {
+                FileUtil.writeString(JSON.toJSONString(ConstantData.getAllDateMap()), holidayProperties.getPath(), StandardCharsets.UTF_8);
+            } else {
+                log.warn("文件更新失败，Jar内部JSON文件数据不可更改，请配置外部JSON文件");
+            }
+        } else {
+            log.warn("文件更新失败，请检查配置文件，type 或 path 配置错误, type: {}  path: {}", holidayProperties.getType(), holidayProperties.getPath());
+        }
     }
 }
