@@ -59,7 +59,7 @@ public class HolidayTest {
         String date = "2023-10-04";
         boolean isHoliday = holidayService.isHoliday(date);
         CalendarInfoVO vo = holidayService.getDate(date);
-        Assert.state(isHoliday, "不是节假日, 是 %s, %s".formatted(vo.getRemark(), vo.getDayOfWeekStr()));
+        Assert.state(isHoliday, String.format("不是节假日, 是 %s, %s", vo.getRemark(), vo.getDayOfWeekStr()));
         log.info("{} 是{}, {}", date, vo.getRemark(), vo.getDayOfWeekStr());
     }
 
@@ -73,7 +73,7 @@ public class HolidayTest {
         String date = "2023-12-04";
         boolean isWorkDay = holidayService.isWorkDay(date);
         CalendarInfoVO vo = holidayService.getDate(date);
-        Assert.state(isWorkDay, "不是工作日或补班, 是 %s, %s".formatted(vo.getRemark(), vo.getDayOfWeekStr()));
+        Assert.state(isWorkDay, String.format("不是工作日或补班, 是 %s, %s", vo.getRemark(), vo.getDayOfWeekStr()));
         log.info("{} 是{}, {}", date, vo.getRemark(), vo.getDayOfWeekStr());
     }
 
@@ -87,7 +87,7 @@ public class HolidayTest {
         String date = "2023-12-09";
         boolean isWeekend = holidayService.isWeekend(date);
         CalendarInfoVO vo = holidayService.getDate(date);
-        Assert.state(isWeekend, "不是周末, 是 %s, %s".formatted(vo.getRemark(), vo.getDayOfWeekStr()));
+        Assert.state(isWeekend, String.format("不是周末, 是 %s, %s", vo.getRemark(), vo.getDayOfWeekStr()));
         log.info("{} 是{}, {}", date, vo.getRemark(), vo.getDayOfWeekStr());
     }
 }

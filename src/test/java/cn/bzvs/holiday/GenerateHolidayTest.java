@@ -34,7 +34,7 @@ public class GenerateHolidayTest {
         List<CalendarVO> calendarVOList = HolidayUtil.getYear(year);
         log.info("{} - 日历长度为：{}", year, calendarVOList.size());
         String json = JSON.toJSONString(calendarVOList);
-        File file = new File("%s/config/holiday.json".formatted(year));
+        File file = new File(year + "/config/holiday.json");
         log.info("{} - 文件路径为：{}", year, file.getAbsolutePath());
         FileUtil.writeString(json, file, StandardCharsets.UTF_8);
     }
@@ -52,7 +52,7 @@ public class GenerateHolidayTest {
         List<CalendarVO> calendarVOList = HolidayUtil.getYears(years);
         log.info("{} - 日历长度为：{}", years, calendarVOList.size());
         String json = JSON.toJSONString(calendarVOList);
-        File file = new File("%s/config/holiday.json".formatted(years));
+        File file = new File(years + "/config/holiday.json");
         log.info("{} - 文件路径为：{}", years, file.getAbsolutePath());
         FileUtil.writeString(json, file, StandardCharsets.UTF_8);
     }

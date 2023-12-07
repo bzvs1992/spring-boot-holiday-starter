@@ -86,7 +86,7 @@ public class HolidayUtil {
         for (AlmanacDTO vo : almanacDTOList) {
             String status = vo.getStatus();
             if (vo.getMonth().equals(String.valueOf(month)) && StringUtils.hasText(status)) {
-                DateTime dateTime = DateUtil.parse("%s-%s-%s".formatted(year, month, Integer.parseInt(vo.getDay())));
+                DateTime dateTime = DateUtil.parse(String.format("%s-%s-%s", year, month, Integer.parseInt(vo.getDay())));
                 CalendarVO date = new CalendarVO();
                 date.setDate(DateUtil.formatDate(dateTime));
                 if (status.equals("1")) {
