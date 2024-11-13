@@ -12,6 +12,7 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- dependency version -->
+        <fmt-plugin.version>2.23</fmt-plugin.version>
         <spring.boot.version>3.2.0</spring.boot.version>
         <hutool.version>5.8.23</hutool.version>
         <fastjson2.version>2.0.43</fastjson2.version>
@@ -68,6 +69,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.spotify.fmt</groupId>
+                <artifactId>fmt-maven-plugin</artifactId>
+                <version>${fmt-plugin.version}</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

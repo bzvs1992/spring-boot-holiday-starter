@@ -14,32 +14,22 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class ApplicationContextUtil implements ApplicationContextAware {
 
-    /**
-     * Spring应用上下文环境
-     */
-    @Getter
-    private static ApplicationContext applicationContext;
+  /** Spring应用上下文环境 */
+  @Getter private static ApplicationContext applicationContext;
 
+  /** 实现ApplicationContextAware接口的回调方法，设置上下文环境 */
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    ApplicationContextUtil.applicationContext = applicationContext;
+  }
 
-    /**
-     * 实现ApplicationContextAware接口的回调方法，设置上下文环境
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextUtil.applicationContext = applicationContext;
-    }
+  /** 获取对象 这里重写了bean方法，起主要作用 */
+  public static Object getBean(String beanId) throws BeansException {
+    return applicationContext.getBean(beanId);
+  }
 
-    /**
-     * 获取对象 这里重写了bean方法，起主要作用
-     */
-    public static Object getBean(String beanId) throws BeansException {
-        return applicationContext.getBean(beanId);
-    }
-
-    /**
-     * 获取对象 这里重写了bean方法，起主要作用
-     */
-    public static Object getBean(Class clzz) throws BeansException {
-        return applicationContext.getBean(clzz);
-    }
+  /** 获取对象 这里重写了bean方法，起主要作用 */
+  public static Object getBean(Class clzz) throws BeansException {
+    return applicationContext.getBean(clzz);
+  }
 }
