@@ -1,94 +1,71 @@
 package cn.bzvs.holiday.entity.vo;
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
-import java.time.LocalDateTime;
-import lombok.Data;
+import java.time.LocalDate;
+import lombok.Getter;
 
-@Data
+/**
+ * 日历详细信息
+ *
+ * @author bzvs
+ * @date 2024-12-04
+ * @since 1.0.0
+ */
+@Getter
 public class CalendarInfoVO extends CalendarVO {
 
-  /** isNullAble:0 */
-  private Integer year;
+  /** 年 */
+  private final Integer year;
 
-  /** isNullAble:0 */
-  private Integer month;
+  /** 月 */
+  private final Integer month;
 
-  /** isNullAble:0 */
-  private Integer day;
+  /** 日 */
+  private final Integer day;
 
-  /** 1，周一 ；2：周二；3：周三；4：周四；5：周五；6：周六；7：周日 */
-  private Integer dayOfWeek;
+  /** 星期：1-周一，2-周二，3-周三，4-周四，5-周五，6-周六，7-周日 */
+  private final Integer dayOfWeek;
 
-  /** 星期几 */
-  private String dayOfWeekStr;
+  /** 星期中文描述 */
+  private final String dayOfWeekStr;
 
-  /** 备注 */
-  private String remark;
+  /** 日期类型备注 */
+  private final String remark;
 
-  private CalendarInfoVO() {}
-
+  /**
+   * 构造日历详细信息
+   *
+   * @param date 日期，格式 yyyy-MM-dd
+   * @param dayOfWeek 星期，1-7
+   * @param status 状态码，0-工作日 1-周末 2-补班 3-节假日
+   */
   public CalendarInfoVO(String date, Integer dayOfWeek, Integer status) {
+    LocalDate localDate = LocalDate.parse(date);
     setDate(date);
-    setDayOfWeek(dayOfWeek);
     setStatus(status);
-  }
-
-  public void setDate(String date) {
-    super.setDate(date);
-    DateTime dateTime = DateUtil.parseDate(date);
-    LocalDateTime localDateTime = dateTime.toLocalDateTime();
-    this.year = localDateTime.getYear();
-    this.month = localDateTime.getMonthValue();
-    this.day = localDateTime.getDayOfMonth();
-  }
-
-  public void setDayOfWeek(Integer dayOfWeek) {
+    this.year = localDate.getYear();
+    this.month = localDate.getMonthValue();
+    this.day = localDate.getDayOfMonth();
     this.dayOfWeek = dayOfWeek;
-    switch (this.dayOfWeek) {
-      case 1:
-        this.dayOfWeekStr = "周一";
-        break;
-      case 2:
-        this.dayOfWeekStr = "周二";
-        break;
-      case 3:
-        this.dayOfWeekStr = "周三";
-        break;
-      case 4:
-        this.dayOfWeekStr = "周四";
-        break;
-      case 5:
-        this.dayOfWeekStr = "周五";
-        break;
-      case 6:
-        this.dayOfWeekStr = "周六";
-        break;
-      case 7:
-        this.dayOfWeekStr = "周日";
-        break;
-      default:
-        this.dayOfWeekStr = "未知";
-        break;
-    }
+    this.dayOfWeekStr = toDayOfWeekStr(dayOfWeek);
+    this.remark = DayType.fromCode(status).getRemark();
   }
 
-  public void setStatus(Integer status) {
-    // 0普通工作日 1周末 2需要补班的工作日 3法定节假日
-    super.setStatus(status);
-    switch (status) {
-      case 0:
-        this.remark = "工作日";
-        break;
-      case 1:
-        this.remark = "周末";
-        break;
-      case 2:
-        this.remark = "补班";
-        break;
-      case 3:
-        this.remark = "节假日";
-        break;
-    }
+  /**
+   * 星期数字转中文
+   *
+   * @param dayOfWeek 星期，1-7
+   * @return 中文描述
+   */
+  private static String toDayOfWeekStr(Integer dayOfWeek) {
+    return switch (dayOfWeek) {
+      case 1 -> "周一";
+      case 2 -> "周二";
+      case 3 -> "周三";
+      case 4 -> "周四";
+      case 5 -> "周五";
+      case 6 -> "周六";
+      case 7 -> "周日";
+      default -> "未知";
+    };
   }
 }
