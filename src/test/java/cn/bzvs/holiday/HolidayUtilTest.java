@@ -39,6 +39,7 @@ class HolidayUtilTest {
   /** 网络不可达时 getMonthStr 返回 fail 哨兵值而非抛异常 */
   @Test
   void getMonthStrReturnsFailOnNetworkError() {
-    assertEquals("fail", HolidayUtil.getMonthStr("http://invalid.invalid.local", 2024, 1));
+    // 使用 127.0.0.1:1：端口 1 无服务监听，连接确定性拒绝，毫秒级返回且不依赖 DNS
+    assertEquals(HolidayUtil.FAIL, HolidayUtil.getMonthStr("http://127.0.0.1:1", 2024, 1));
   }
 }

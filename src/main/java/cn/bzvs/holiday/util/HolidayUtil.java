@@ -44,8 +44,8 @@ public class HolidayUtil {
   /** 在线请求超时时间（毫秒） */
   private static final int HTTP_TIMEOUT_MS = 10_000;
 
-  /** 在线抓取失败哨兵值 */
-  private static final String FAIL = "fail";
+  /** 在线抓取失败哨兵值，getMonthStr 失败时返回该值 */
+  public static final String FAIL = "fail";
 
   private HolidayUtil() {}
 
@@ -96,8 +96,12 @@ public class HolidayUtil {
     JSONObject json = JSON.parseObject(result);
     JSONArray jsonArray =
         (JSONArray) JSONPath.eval(json, "$.Result[0].DisplayData.resultData.tplData.data.almanac");
-    List<AlmanacDTO> almanacDTOList =
-        JSON.parseArray(JSON.toJSONString(jsonArray), AlmanacDTO.class);
+    if (jsonArray == null) {
+      // JSONPath 未命中（接口响应结构变化或数据缺失）：与 FAIL 相同的降级路径，避免 NPE 向上冒泡
+      log.warn("接口响应结构异常，{}年{}月 日历数据未命中", year, month);
+      return calendarVOList;
+    }
+    List<AlmanacDTO> almanacDTOList = jsonArray.toJavaList(AlmanacDTO.class);
     for (AlmanacDTO vo : almanacDTOList) {
       String status = vo.getStatus();
       if (vo.getMonth().equals(String.valueOf(month)) && StringUtils.hasText(status)) {
@@ -129,7 +133,7 @@ public class HolidayUtil {
   /**
    * 获取某年某月的日历数据
    *
-   * @param baseApiUrl 接口基础地址（不含 query 参数）
+   * @param baseApiUrl 接口基础地址（可含或不含已有查询参数）
    * @param year 年份
    * @param month 月份
    * @return JSON 字符串，失败返回 "fail"
@@ -139,11 +143,14 @@ public class HolidayUtil {
     long timeMillis = System.currentTimeMillis();
     try {
       String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-      String apiUrl = baseApiUrl + "&query=" + encodedQuery + "&cb=jsonp_" + timeMillis;
+      // baseApiUrl 可能已带查询参数，按实际情况选择 "?" 或 "&" 作为分隔符
+      String separator = baseApiUrl.contains("?") ? "&" : "?";
+      String apiUrl = baseApiUrl + separator + "query=" + encodedQuery + "&cb=jsonp_" + timeMillis;
       String content = HttpRequest.get(apiUrl).timeout(HTTP_TIMEOUT_MS).execute().body();
       return reParseJson(content);
     } catch (Exception e) {
-      log.error("在线获取 {} 数据异常", query, e);
+      // 第三方无 SLA 接口，网络抖动属预期场景，warn 级别记录即可
+      log.warn("在线获取 {} 数据异常", query, e);
     }
     return FAIL;
   }
@@ -155,6 +162,9 @@ public class HolidayUtil {
    * @return JSON 字符串
    */
   public static String reParseJson(String old) {
+    if (old == null) {
+      throw new IllegalArgumentException("响应内容为空");
+    }
     int start = old.indexOf("{");
     int end = old.lastIndexOf("}");
     if (start < 0 || end <= start) {
