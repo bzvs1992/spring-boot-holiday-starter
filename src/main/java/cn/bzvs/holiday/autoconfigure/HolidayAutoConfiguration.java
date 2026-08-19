@@ -82,22 +82,20 @@ public class HolidayAutoConfiguration {
     if (!"local".equals(this.properties.getType())) {
       return;
     }
-    // 外部系统路径文件
-    if (FileUtil.exist(this.properties.getPath())) {
-      return;
-    }
-    // classpath 资源文件
+    // 后缀校验需先于存在性判断：hutool FileUtil.exist 对 classpath 资源也会返回 true，
+    // 若先判存在会导致非 .json 的 classpath 文件跳过后缀校验
     Resource resource = this.resourceLoader.getResource(this.properties.getPath());
-    Assert.state(
-        resource.exists(),
-        "Cannot find config location: "
-            + resource
-            + " (please add config file or check your Holiday configuration)");
     String filename = resource.getFilename();
     Assert.state(
         filename != null && filename.toLowerCase().endsWith(".json"),
         "The file format is incorrect, location: "
             + resource
             + " (please configure a json file or check your Holiday configuration)");
+    // 外部系统路径文件或 classpath 资源文件
+    Assert.state(
+        FileUtil.exist(this.properties.getPath()) || resource.exists(),
+        "Cannot find config location: "
+            + resource
+            + " (please add config file or check your Holiday configuration)");
   }
 }

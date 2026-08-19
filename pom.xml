@@ -186,7 +186,7 @@
                         </goals>
                         <configuration>
                             <!-- 排除依赖外部网络（百度日历 API）与 Spring 容器的类，无法被纯单元测试覆盖；
-                                 核心业务类（HolidayService/ConstantData/CalendarInfoVO）仍受 0.60 门禁约束 -->
+                                 核心业务类（HolidayService/ConstantData/CalendarInfoVO）仍受 0.70 门禁约束 -->
                             <excludes>
                                 <exclude>cn/bzvs/holiday/util/HolidayUtil.class</exclude>
                                 <exclude>cn/bzvs/holiday/util/HolidayFix.class</exclude>
@@ -201,7 +201,7 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.60</minimum>
+                                            <minimum>0.70</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
