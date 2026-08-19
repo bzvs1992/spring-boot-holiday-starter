@@ -4,13 +4,14 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Spring-boot-holiday-starter v2.0.0</h1>
 <h4 align="center">一个轻量级节假日判断的小工具！</h4>
 <p align="center">
-<a href="https://gitee.com/bzvs_team/spring-boot-holiday-stater/stargazers"><img src="https://gitee.com/bzvs_team/spring-boot-holiday-stater/badge/star.svg"></a>
-	<a href="https://gitee.com/bzvs_team/spring-boot-holiday-stater/members"><img src="https://gitee.com/bzvs_team/spring-boot-holiday-stater/badge/fork.svg"></a>
-	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater"><img src="https://img.shields.io/github/stars/bzvs1992/spring-boot-holiday-stater?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater/network/members"><img src="https://img.shields.io/github/forks/bzvs1992/spring-boot-holiday-stater?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater/watchers"><img src="https://img.shields.io/github/watchers/bzvs1992/spring-boot-holiday-stater?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater/issues"><img src="https://img.shields.io/github/issues/bzvs1992/spring-boot-holiday-stater.svg?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/bzvs1992/spring-boot-holiday-stater/blob/master/LICENSE"><img src="https://img.shields.io/github/license/bzvs1992/spring-boot-holiday-stater.svg?style=flat-square"></a>
+<a href="https://github.com/bzvs1992/spring-boot-holiday-starter/actions/workflows/ci.yml"><img src="https://github.com/bzvs1992/spring-boot-holiday-starter/actions/workflows/ci.yml/badge.svg"></a>
+<a href="https://gitee.com/bzvs_team/spring-boot-holiday-starter/stargazers"><img src="https://gitee.com/bzvs_team/spring-boot-holiday-starter/badge/star.svg"></a>
+	<a href="https://gitee.com/bzvs_team/spring-boot-holiday-starter/members"><img src="https://gitee.com/bzvs_team/spring-boot-holiday-starter/badge/fork.svg"></a>
+	<a href="https://github.com/bzvs1992/spring-boot-holiday-starter"><img src="https://img.shields.io/github/stars/bzvs1992/spring-boot-holiday-starter?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/bzvs1992/spring-boot-holiday-starter/network/members"><img src="https://img.shields.io/github/forks/bzvs1992/spring-boot-holiday-starter?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/bzvs1992/spring-boot-holiday-starter/watchers"><img src="https://img.shields.io/github/watchers/bzvs1992/spring-boot-holiday-starter?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/bzvs1992/spring-boot-holiday-starter/issues"><img src="https://img.shields.io/github/issues/bzvs1992/spring-boot-holiday-starter.svg?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/bzvs1992/spring-boot-holiday-starter/blob/master/LICENSE"><img src="https://img.shields.io/github/license/bzvs1992/spring-boot-holiday-starter.svg?style=flat-square"></a>
 </p>
 
 ---

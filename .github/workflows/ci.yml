@@ -1,0 +1,25 @@
+# 持续集成：在 Spring Boot 3.5.x 与 4.x 双基线下构建并测试
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        spring-boot-version: ['3.5.16', '4.1.0']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Build and test
+        run: mvn -B verify -Dspring.boot.version=${{ matrix.spring-boot-version }}
