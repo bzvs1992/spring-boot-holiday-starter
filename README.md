@@ -1,7 +1,7 @@
 <p align="center">
     <img src="https://git.bzvs.cn/logo.png" />
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Spring-boot-holiday-starter v1.0.0</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Spring-boot-holiday-starter v2.0.0</h1>
 <h4 align="center">一个轻量级节假日判断的小工具！</h4>
 <p align="center">
 <a href="https://gitee.com/bzvs_team/spring-boot-holiday-stater/stargazers"><img src="https://gitee.com/bzvs_team/spring-boot-holiday-stater/badge/star.svg"></a>
@@ -25,8 +25,8 @@
 
 **Spring-boot-holiday-starter** 一个轻量级节假日判断的小工具，主要解决：获取节假日数据 和 判断是否是节假日。
 - 支持说明
-  - spirngboot 2.7 +
-  - jdk17 +
+  - Spring Boot 3.5.x / 4.x（自 2.0.0 起不再兼容 Spring Boot 2.x）
+  - JDK 17+（推荐 Java 21+，可充分适配 Spring Boot 4 虚拟线程运行时）
 
 ## 使用
 -  yml 配置

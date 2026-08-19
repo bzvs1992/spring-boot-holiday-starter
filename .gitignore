@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 .DS_Store
 .codegraph/
+docs/superpowers/
 
 ### STS ###
 .apt_generated
