@@ -30,14 +30,16 @@ class HolidayTest {
   /** 节假日服务 */
   private HolidayService holidayService;
 
-  /** 初始化缓存数据（同时修复原实现：显式 UTF-8 编码、关闭流） */
+  /** 初始化缓存数据（同时修复原实现：显式 UTF-8 编码、try-with-resources 确保流关闭） */
   @BeforeEach
   void init() throws Exception {
     ResourceLoader resourceLoader = new DefaultResourceLoader();
     Resource resource = resourceLoader.getResource("classpath:config/holiday.json");
-    String result = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
-    List<CalendarVO> calendarVOList = JSON.parseArray(result, CalendarVO.class);
-    ConstantData.init(calendarVOList);
+    try (var inputStream = resource.getInputStream()) {
+      String result = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+      List<CalendarVO> calendarVOList = JSON.parseArray(result, CalendarVO.class);
+      ConstantData.init(calendarVOList);
+    }
 
     holidayService = new HolidayService();
   }
@@ -48,13 +50,13 @@ class HolidayTest {
     assertTrue(holidayService.isHoliday("2023-10-04"));
   }
 
-  /** 工作日测试 */
+  /** 工作日测试：缓存外日期，验证按自然星期的兜底判定（周一为工作日） */
   @Test
   void checkWorkDay() {
     assertTrue(holidayService.isWorkDay("2023-12-04"));
   }
 
-  /** 周末测试 */
+  /** 周末测试：缓存外日期，验证按自然星期的兜底判定（周六为周末） */
   @Test
   void checkWeekend() {
     assertTrue(holidayService.isWeekend("2023-12-09"));
