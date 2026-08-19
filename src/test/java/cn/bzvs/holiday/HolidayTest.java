@@ -10,6 +10,10 @@ import cn.bzvs.holiday.entity.vo.CalendarVO;
 import cn.bzvs.holiday.service.HolidayService;
 import com.alibaba.fastjson2.JSON;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,5 +81,28 @@ class HolidayTest {
     assertEquals(Integer.valueOf(2023), vo.getYear());
     assertEquals(Integer.valueOf(10), vo.getMonth());
     assertEquals(Integer.valueOf(4), vo.getDay());
+  }
+
+  /** Date / LocalDate / LocalDateTime 重载与 String 重载结果一致 */
+  @Test
+  void dateOverloadsAreEquivalent() {
+    LocalDate localDate = LocalDate.of(2023, 10, 4);
+    LocalDateTime localDateTime = localDate.atTime(15, 30);
+    Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    assertTrue(holidayService.isHoliday(localDate));
+    assertTrue(holidayService.isHoliday(localDateTime));
+    assertTrue(holidayService.isHoliday(date));
+    assertEquals(holidayService.getDate("2023-10-04").getStatus(),
+        holidayService.getDate(date).getStatus());
+  }
+
+  /** 缓存中不存在的日期按自然星期兜底判断 */
+  @Test
+  void unknownDateFallsBackToNaturalWeek() {
+    // 2030-01-05 为周六（缓存外），应判定为周末
+    assertTrue(holidayService.isWeekend("2030-01-05"));
+    // 2030-01-07 为周一（缓存外），应判定为工作日
+    assertTrue(holidayService.isWorkDay("2030-01-07"));
   }
 }

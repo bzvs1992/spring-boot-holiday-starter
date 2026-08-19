@@ -3,11 +3,11 @@ package cn.bzvs.holiday.service;
 import cn.bzvs.holiday.autoconfigure.ConstantData;
 import cn.bzvs.holiday.entity.vo.CalendarInfoVO;
 import cn.bzvs.holiday.entity.vo.CalendarVO;
-import cn.bzvs.holiday.util.HolidayUtil;
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
+import cn.bzvs.holiday.entity.vo.DayType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 
@@ -15,196 +15,207 @@ import java.util.Map;
  * 节假日相关的日历服务
  *
  * @author bzvs
- * @date 2024/12/06
+ * @date 2024-12-06
  * @since 1.0.0
  */
 public class HolidayService {
 
-  private static final String format = "yyyy-MM-dd";
+  /** 日期格式 */
+  private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   /**
    * 获取指定日期的节假日信息
    *
-   * @param date
-   * @return HolidayVO
+   * @param date 日期
+   * @return CalendarInfoVO
    */
   public CalendarInfoVO getDate(Date date) {
-    String day = DateUtil.format(date, format);
-    return getDate(day);
+    return getDate(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
   }
 
   /**
    * 获取指定日期的节假日信息
    *
-   * @param localDate
-   * @return HolidayVO
+   * @param localDate 日期
+   * @return CalendarInfoVO
    */
   public CalendarInfoVO getDate(LocalDate localDate) {
-    String day = DateUtil.format(localDate.atStartOfDay(), format);
-    return getDate(day);
+    return getVo(localDate);
   }
 
   /**
    * 获取指定日期的节假日信息
    *
-   * @param localDateTime
-   * @return HolidayVO
+   * @param localDateTime 日期时间
+   * @return CalendarInfoVO
    */
   public CalendarInfoVO getDate(LocalDateTime localDateTime) {
-    String day = DateUtil.format(localDateTime, format);
-    return getDate(day);
+    return getVo(localDateTime.toLocalDate());
   }
 
   /**
    * 获取指定日期的节假日信息
    *
    * @param date 日期格式：yyyy-MM-dd
-   * @return HolidayVO
+   * @return CalendarInfoVO
    */
   public CalendarInfoVO getDate(String date) {
-    return getVo(date);
+    return getVo(LocalDate.parse(date, FORMAT));
   }
 
   /**
    * 是否是节假日
    *
-   * @param date
+   * @param date 日期
    * @return boolean
    */
   public boolean isHoliday(Date date) {
-    String day = DateUtil.format(date, format);
-    return isHoliday(day);
+    return isHoliday(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
   }
 
   /**
    * 是否是节假日
    *
-   * @param localDate
+   * @param localDate 日期
    * @return boolean
    */
   public boolean isHoliday(LocalDate localDate) {
-    return isHoliday(localDate.atStartOfDay());
+    return getStatus(localDate) == DayType.HOLIDAY.getCode();
   }
 
   /**
    * 是否是节假日
    *
-   * @param localDateTime
+   * @param localDateTime 日期时间
    * @return boolean
    */
   public boolean isHoliday(LocalDateTime localDateTime) {
-    String day = DateUtil.format(localDateTime, format);
-    return isHoliday(day);
+    return isHoliday(localDateTime.toLocalDate());
   }
 
   /**
    * 是否是节假日
    *
-   * @param day
+   * @param day 日期格式：yyyy-MM-dd
    * @return boolean
    */
   public boolean isHoliday(String day) {
-    CalendarVO vo = getDate(day);
-    return vo.getStatus() == 3;
+    return isHoliday(LocalDate.parse(day, FORMAT));
   }
 
   /**
    * 是否是工作日或补班
    *
-   * @param date
+   * @param date 日期
    * @return boolean
    */
   public boolean isWorkDay(Date date) {
-    String day = DateUtil.format(date, format);
-    return isWorkDay(day);
+    return isWorkDay(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
   }
 
   /**
    * 是否是工作日或补班
    *
-   * @param localDate
+   * @param localDate 日期
    * @return boolean
    */
   public boolean isWorkDay(LocalDate localDate) {
-    return isWorkDay(localDate.atStartOfDay());
+    int status = getStatus(localDate);
+    return status == DayType.WORKDAY.getCode() || status == DayType.COMPENSATE_WORK.getCode();
   }
 
   /**
    * 是否是工作日或补班
    *
-   * @param localDateTime
+   * @param localDateTime 日期时间
    * @return boolean
    */
   public boolean isWorkDay(LocalDateTime localDateTime) {
-    String day = DateUtil.format(localDateTime, format);
-    return isWorkDay(day);
+    return isWorkDay(localDateTime.toLocalDate());
   }
 
   /**
    * 是否是工作日或补班
    *
-   * @param day
+   * @param day 日期格式：yyyy-MM-dd
    * @return boolean
    */
   public boolean isWorkDay(String day) {
-    CalendarVO vo = getDate(day);
-    return vo.getStatus() == 0 || vo.getStatus() == 2;
+    return isWorkDay(LocalDate.parse(day, FORMAT));
   }
 
   /**
    * 是否是周末
    *
-   * @param date
+   * @param date 日期
    * @return boolean
    */
   public boolean isWeekend(Date date) {
-    String day = DateUtil.format(date, format);
-    return isWeekend(day);
+    return isWeekend(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
   }
 
   /**
    * 是否是周末
    *
-   * @param localDate
+   * @param localDate 日期
    * @return boolean
    */
   public boolean isWeekend(LocalDate localDate) {
-    return isWeekend(localDate.atStartOfDay());
+    return getStatus(localDate) == DayType.WEEKEND.getCode();
   }
 
   /**
    * 是否是周末
    *
-   * @param localDateTime
+   * @param localDateTime 日期时间
    * @return boolean
    */
   public boolean isWeekend(LocalDateTime localDateTime) {
-    String day = DateUtil.format(localDateTime, format);
-    return isWeekend(day);
+    return isWeekend(localDateTime.toLocalDate());
   }
 
   /**
    * 是否是周末
    *
-   * @param day
+   * @param day 日期格式：yyyy-MM-dd
    * @return boolean
    */
   public boolean isWeekend(String day) {
-    CalendarVO vo = getDate(day);
-    return vo.getStatus() == 1;
+    return isWeekend(LocalDate.parse(day, FORMAT));
   }
 
-  private static CalendarInfoVO getVo(String date) {
-    DateTime dateTime = DateUtil.parseDate(date);
-    CalendarInfoVO infoVO;
+  /**
+   * 查询状态码：缓存命中返回缓存值，未命中按自然星期兜底（周一~周五为工作日，周六日为周末）
+   *
+   * @param localDate 日期
+   * @return 状态码
+   */
+  private static int getStatus(LocalDate localDate) {
+    String date = localDate.format(FORMAT);
     Map<String, CalendarVO> voMap = ConstantData.getAllDateMap();
-    int dayOfWeek = HolidayUtil.getDayOfWeek(dateTime);
-    if (voMap.containsKey(date)) {
-      CalendarVO vo = voMap.get(date);
-      infoVO = new CalendarInfoVO(vo.getDate(), dayOfWeek, vo.getStatus());
-    } else {
-      infoVO = new CalendarInfoVO(date, dayOfWeek, dayOfWeek < 6 ? 0 : 1);
+    CalendarVO vo = voMap.get(date);
+    if (vo != null) {
+      return vo.getStatus();
     }
-    return infoVO;
+    int dow = localDate.getDayOfWeek().getValue();
+    return dow < 6 ? DayType.WORKDAY.getCode() : DayType.WEEKEND.getCode();
+  }
+
+  /**
+   * 构建日历详细信息
+   *
+   * @param localDate 日期
+   * @return CalendarInfoVO
+   */
+  private static CalendarInfoVO getVo(LocalDate localDate) {
+    String date = localDate.format(FORMAT);
+    Map<String, CalendarVO> voMap = ConstantData.getAllDateMap();
+    int dayOfWeek = localDate.getDayOfWeek().getValue();
+    CalendarVO vo = voMap.get(date);
+    if (vo != null) {
+      return new CalendarInfoVO(vo.getDate(), dayOfWeek, vo.getStatus());
+    }
+    int status = dayOfWeek < 6 ? DayType.WORKDAY.getCode() : DayType.WEEKEND.getCode();
+    return new CalendarInfoVO(date, dayOfWeek, status);
   }
 }
