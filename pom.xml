@@ -5,17 +5,30 @@
 
     <groupId>cn.bzvs</groupId>
     <artifactId>spring-boot-holiday-starter</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0-SNAPSHOT</version>
     <name>spring-boot-holiday-starter</name>
-    <description>spring-boot-holiday-starter</description>
+    <description>轻量级中国节假日判断 Spring Boot Starter，支持 Spring Boot 3.x / 4.x</description>
+    <url>https://github.com/bzvs1992/spring-boot-holiday-starter</url>
+
     <properties>
+        <!-- Java 17 为 Spring Boot 3.x/4.x 共同最低要求，Boot 4 推荐运行时 Java 21+ -->
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- dependency version -->
-        <fmt-plugin.version>2.23</fmt-plugin.version>
-        <spring.boot.version>3.2.0</spring.boot.version>
-        <hutool.version>5.8.23</hutool.version>
-        <fastjson2.version>2.0.43</fastjson2.version>
+        <!-- Spring Boot 基线版本，可通过 -Dspring.boot.version=3.5.16 切换 3.x 基线验证 -->
+        <spring.boot.version>4.1.0</spring.boot.version>
+        <!-- 插件版本 -->
+        <fmt-plugin.version>2.29</fmt-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
+        <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <jacoco-plugin.version>0.8.15</jacoco-plugin.version>
+        <!-- 依赖版本（lombok 版本由 Boot BOM 管理，此处仅供注解处理器路径引用） -->
+        <lombok.version>1.18.46</lombok.version>
+        <hutool.version>5.8.47</hutool.version>
+        <fastjson2.version>2.0.64</fastjson2.version>
     </properties>
 
     <dependencyManagement>
@@ -49,9 +62,10 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- 测试：JUnit Jupiter（Boot 3.x 为 JUnit 5，Boot 4.x 为 JUnit 6，注解 API 一致） -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -77,17 +91,29 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <!-- JDK 23+ 默认禁用隐式注解处理，需显式声明 Lombok 处理器路径 -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven-jar-plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -99,7 +125,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -113,7 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <additionalJOptions>
                         <additionalJOption>-Xdoclint:none</additionalJOption>
@@ -128,17 +154,53 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- GPG -->
+            <!-- 覆盖率统计与门禁 -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
+                        <id>prepare-agent</id>
                         <goals>
-                            <goal>sign</goal>
+                            <goal>prepare-agent</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 排除依赖外部网络（百度日历 API）与 Spring 容器的类，无法被纯单元测试覆盖；
+                                 核心业务类（HolidayService/ConstantData/CalendarInfoVO）仍受 0.60 门禁约束 -->
+                            <excludes>
+                                <exclude>cn/bzvs/holiday/util/HolidayUtil.class</exclude>
+                                <exclude>cn/bzvs/holiday/util/HolidayFix.class</exclude>
+                                <exclude>cn/bzvs/holiday/util/ApplicationContextUtil.class</exclude>
+                                <exclude>cn/bzvs/holiday/autoconfigure/HolidayAutoConfiguration.class</exclude>
+                                <exclude>cn/bzvs/holiday/service/HolidayFixService.class</exclude>
+                            </excludes>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.60</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -154,7 +216,6 @@
         </license>
     </licenses>
 
-
     <!--   开发人员信息  -->
     <developers>
         <developer>
@@ -163,15 +224,41 @@
             <email>admin@bzvs.cn</email>
         </developer>
     </developers>
+
+    <!-- 修正 SCM 拼写错误：stater -> starter，与 git remote 保持一致 -->
     <scm>
-        <connection>scm:git:https://github.com/bzvs1992/spring-boot-holiday-stater.git</connection>
-        <developerConnection>scm:git:git@github.com:bzvs1992/spring-boot-holiday-stater.git</developerConnection>
-        <url>https://github.com/bzvs1992/spring-boot-holiday-stater</url>
+        <connection>scm:git:https://github.com/bzvs1992/spring-boot-holiday-starter.git</connection>
+        <developerConnection>scm:git:git@github.com:bzvs1992/spring-boot-holiday-starter.git</developerConnection>
+        <url>https://github.com/bzvs1992/spring-boot-holiday-starter</url>
     </scm>
+
+    <!-- 问题跟踪（Sonatype 审核要求） -->
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/bzvs1992/spring-boot-holiday-starter/issues</url>
+    </issueManagement>
 
     <profiles>
         <profile>
             <id>sonatype-release</id>
+            <!-- GPG 签名仅在发布时执行，日常构建无需 GPG 环境 -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
             <distributionManagement>
                 <snapshotRepository>
                     <id>sonatype-nexus-snapshots</id>

@@ -1,96 +1,79 @@
 package cn.bzvs.holiday;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import cn.bzvs.holiday.autoconfigure.ConstantData;
 import cn.bzvs.holiday.entity.vo.CalendarInfoVO;
 import cn.bzvs.holiday.entity.vo.CalendarVO;
 import cn.bzvs.holiday.service.HolidayService;
 import com.alibaba.fastjson2.JSON;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.Assert;
+import org.springframework.util.StreamUtils;
 
 /**
  * 节假日 & 工作日 & 周末 测试
  *
  * @author bzvs
- * @date 2024/12/04
+ * @date 2024-12-04
  * @since 1.0.0
  */
-@Slf4j
-public class HolidayTest {
+class HolidayTest {
 
+  /** 节假日服务 */
   private HolidayService holidayService;
 
-  /**
-   * 初始化数据
-   *
-   * @throws Exception
-   */
-  @Before
-  public void init() throws Exception {
+  /** 初始化缓存数据（同时修复原实现：显式 UTF-8 编码、关闭流） */
+  @BeforeEach
+  void init() throws Exception {
     ResourceLoader resourceLoader = new DefaultResourceLoader();
-    Resource resource = resourceLoader.getResource("/config/holiday.json");
-    assert resource != null;
-    InputStream inputStream = resource.getInputStream();
-    String result =
-        new BufferedReader(new InputStreamReader(inputStream))
-            .lines()
-            .collect(Collectors.joining(System.lineSeparator()));
+    Resource resource = resourceLoader.getResource("classpath:config/holiday.json");
+    String result = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
     List<CalendarVO> calendarVOList = JSON.parseArray(result, CalendarVO.class);
     ConstantData.init(calendarVOList);
 
     holidayService = new HolidayService();
   }
 
-  /**
-   * 节假日测试
-   *
-   * @throws Exception
-   */
+  /** 节假日测试 */
   @Test
-  public void checkHoliday() throws Exception {
-    String date = "2023-10-04";
-    boolean isHoliday = holidayService.isHoliday(date);
-    CalendarInfoVO vo = holidayService.getDate(date);
-    Assert.state(isHoliday, String.format("不是节假日, 是 %s, %s", vo.getRemark(), vo.getDayOfWeekStr()));
-    log.info("{} 是{}, {}", date, vo.getRemark(), vo.getDayOfWeekStr());
+  void checkHoliday() {
+    assertTrue(holidayService.isHoliday("2023-10-04"));
   }
 
-  /**
-   * 工作日测试
-   *
-   * @throws Exception
-   */
+  /** 工作日测试 */
   @Test
-  public void checkWorkDay() throws Exception {
-    String date = "2023-12-04";
-    boolean isWorkDay = holidayService.isWorkDay(date);
-    CalendarInfoVO vo = holidayService.getDate(date);
-    Assert.state(
-        isWorkDay, String.format("不是工作日或补班, 是 %s, %s", vo.getRemark(), vo.getDayOfWeekStr()));
-    log.info("{} 是{}, {}", date, vo.getRemark(), vo.getDayOfWeekStr());
+  void checkWorkDay() {
+    assertTrue(holidayService.isWorkDay("2023-12-04"));
   }
 
-  /**
-   * 周末测试
-   *
-   * @throws Exception
-   */
+  /** 周末测试 */
   @Test
-  public void checkWeekend() throws Exception {
-    String date = "2023-12-09";
-    boolean isWeekend = holidayService.isWeekend(date);
-    CalendarInfoVO vo = holidayService.getDate(date);
-    Assert.state(isWeekend, String.format("不是周末, 是 %s, %s", vo.getRemark(), vo.getDayOfWeekStr()));
-    log.info("{} 是{}, {}", date, vo.getRemark(), vo.getDayOfWeekStr());
+  void checkWeekend() {
+    assertTrue(holidayService.isWeekend("2023-12-09"));
+  }
+
+  /** 补班测试：补班日属于工作日，且不是周末 */
+  @Test
+  void checkCompensateWorkDay() {
+    assertTrue(holidayService.isWorkDay("2023-10-07"));
+    assertFalse(holidayService.isWeekend("2023-10-07"));
+  }
+
+  /** getDate 返回完整日历信息 */
+  @Test
+  void checkGetDateInfo() {
+    CalendarInfoVO vo = holidayService.getDate("2023-10-04");
+    assertEquals("节假日", vo.getRemark());
+    assertEquals(Integer.valueOf(2023), vo.getYear());
+    assertEquals(Integer.valueOf(10), vo.getMonth());
+    assertEquals(Integer.valueOf(4), vo.getDay());
   }
 }

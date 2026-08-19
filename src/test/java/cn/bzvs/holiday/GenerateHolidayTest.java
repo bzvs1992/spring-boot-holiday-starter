@@ -10,25 +10,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * 生成JSON文件测试类
  *
  * @author bzvs
- * @date 2024/12/04
+ * @date 2024-12-04
  * @since 1.0.0
  */
 @Slf4j
-public class GenerateHolidayTest {
+class GenerateHolidayTest {
 
   /**
    * 生成本地JSON文件（某年）
    *
-   * @throws Exception
+   * @throws Exception 异常
    */
   @Test
-  public void generateFile() throws Exception {
+  @Disabled("依赖百度日历外部接口，CI 中禁用，需要时手动运行")
+  void generateFile() throws Exception {
     int year = 2025;
     List<CalendarVO> calendarVOList = HolidayUtil.getYear(year);
     log.info("{} - 日历长度为：{}", year, calendarVOList.size());
@@ -41,10 +43,11 @@ public class GenerateHolidayTest {
   /**
    * 生成本地JSON文件（多年）
    *
-   * @throws Exception
+   * @throws Exception 异常
    */
   @Test
-  public void generateFileYears() throws Exception {
+  @Disabled("依赖百度日历外部接口，CI 中禁用，需要时手动运行")
+  void generateFileYears() throws Exception {
     Set<Integer> years = new HashSet<>();
     years.add(2023);
     years.add(2024);
