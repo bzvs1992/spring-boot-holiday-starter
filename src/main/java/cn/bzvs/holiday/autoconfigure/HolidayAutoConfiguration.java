@@ -5,6 +5,7 @@ import cn.bzvs.holiday.service.HolidayFixService;
 import cn.bzvs.holiday.service.HolidayService;
 import cn.bzvs.holiday.util.ApplicationContextUtil;
 import cn.hutool.core.io.FileUtil;
+import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -87,7 +88,7 @@ public class HolidayAutoConfiguration {
     Resource resource = this.resourceLoader.getResource(this.properties.getPath());
     String filename = resource.getFilename();
     Assert.state(
-        filename != null && filename.toLowerCase().endsWith(".json"),
+        filename != null && filename.toLowerCase(Locale.ROOT).endsWith(".json"),
         "The file format is incorrect, location: "
             + resource
             + " (please configure a json file or check your Holiday configuration)");

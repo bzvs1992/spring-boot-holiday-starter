@@ -185,14 +185,15 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <!-- 排除依赖外部网络（百度日历 API）与 Spring 容器的类，无法被纯单元测试覆盖；
-                                 核心业务类（HolidayService/ConstantData/CalendarInfoVO）仍受 0.70 门禁约束 -->
+                            <!-- 排除无法被纯单元测试覆盖的类：HolidayUtil 依赖外部网络（百度日历 API）、
+                                 HolidayFix 有文件 IO 副作用、ApplicationContextUtil 依赖静态 Spring 运行期上下文；
+                                 已可被 ApplicationContextRunner 纯单元测试覆盖的装配类
+                                 （HolidayAutoConfiguration/HolidayFixService）已移出排除清单，
+                                 与其余核心业务类（HolidayService/ConstantData/CalendarInfoVO）同受 0.70 门禁约束 -->
                             <excludes>
                                 <exclude>cn/bzvs/holiday/util/HolidayUtil.class</exclude>
                                 <exclude>cn/bzvs/holiday/util/HolidayFix.class</exclude>
                                 <exclude>cn/bzvs/holiday/util/ApplicationContextUtil.class</exclude>
-                                <exclude>cn/bzvs/holiday/autoconfigure/HolidayAutoConfiguration.class</exclude>
-                                <exclude>cn/bzvs/holiday/service/HolidayFixService.class</exclude>
                             </excludes>
                             <rules>
                                 <rule>

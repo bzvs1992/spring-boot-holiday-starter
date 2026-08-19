@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 /**
  * 自动配置装配测试（Boot 3.x/4.x 标准 Starter 测试方式）
  *
+ * <p>注：测试依赖 ConstantData.init 的全量替换语义保证用例间缓存隔离，不可并行执行
+ *
  * @author bzvs
  * @since 2.0.0
  */
@@ -59,7 +61,16 @@ class HolidayAutoConfigurationTest {
   void userDefinedBeanIsNotOverridden() {
     contextRunner
         .withPropertyValues("holiday.type=local", "holiday.path=classpath:config/holiday.json")
-        .withBean("holidayService", HolidayService.class, HolidayService::new)
-        .run(context -> assertThat(context).hasSingleBean(HolidayService.class));
+        .withBean("holidayService", HolidayService.class, CustomHolidayService::new)
+        .run(
+            context -> {
+              assertThat(context).hasSingleBean(HolidayService.class);
+              // 存活实例为用户子类而非自动配置的默认 Bean，确证 @ConditionalOnMissingBean 退让
+              assertThat(context.getBean(HolidayService.class))
+                  .isInstanceOf(CustomHolidayService.class);
+            });
   }
+
+  /** 用户自定义实现 */
+  private static class CustomHolidayService extends HolidayService {}
 }
