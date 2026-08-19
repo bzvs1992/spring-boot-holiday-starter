@@ -68,33 +68,33 @@ public class HolidayFix {
   }
 
   /**
-   * 修复数据（配置从 Spring 上下文获取）
+   * 修复数据（不更新文件，不依赖 Spring 上下文）
    *
    * @param file JSON文件
    * @return 是否修复成功
    */
   public static boolean fix(File file) {
-    return fix(file, false, getProperties());
+    return fix(file, false, null);
   }
 
   /**
-   * 修复数据（配置从 Spring 上下文获取）
+   * 修复数据（不更新文件，不依赖 Spring 上下文）
    *
    * @param json JSON数据
    * @return 是否修复成功
    */
   public static boolean fix(String json) {
-    return fix(json, false, getProperties());
+    return fix(json, false, null);
   }
 
   /**
-   * 修复数据（配置从 Spring 上下文获取）
+   * 修复数据（不更新文件，不依赖 Spring 上下文）
    *
    * @param calendarVOList 对象列表
    * @return 是否修复成功
    */
   public static boolean fix(List<CalendarVO> calendarVOList) {
-    return fix(calendarVOList, false, getProperties());
+    return fix(calendarVOList, false, null);
   }
 
   /**
@@ -178,14 +178,5 @@ public class HolidayFix {
           properties.getPath());
     }
     return false;
-  }
-
-  /**
-   * 从 Spring 上下文获取节假日配置
-   *
-   * @return HolidayProperties
-   */
-  private static HolidayProperties getProperties() {
-    return ApplicationContextUtil.getBean(HolidayProperties.class);
   }
 }

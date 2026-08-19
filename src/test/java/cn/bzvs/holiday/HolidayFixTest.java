@@ -8,9 +8,14 @@ import cn.bzvs.holiday.autoconfigure.properties.HolidayProperties;
 import cn.bzvs.holiday.entity.vo.CalendarVO;
 import cn.bzvs.holiday.service.HolidayService;
 import cn.bzvs.holiday.util.HolidayFix;
+import com.alibaba.fastjson2.JSON;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * HolidayFix 测试
@@ -68,5 +73,28 @@ class HolidayFixTest {
   @Test
   void fixReturnsFalseOnInvalidJson() {
     assertFalse(HolidayFix.fix("not-a-json", false, properties));
+  }
+
+  /** updateFile=true 时以数组格式写回文件（round-trip 验证） */
+  @Test
+  void updateFileWritesArrayFormatRoundTrip(@TempDir Path tempDir) throws Exception {
+    Path file = tempDir.resolve("holiday.json");
+    Files.writeString(file, "[]", StandardCharsets.UTF_8);
+    properties.setType("local");
+    properties.setPath(file.toAbsolutePath().toString());
+
+    assertTrue(HolidayFix.fix(List.of(vo("2024-01-01", 3)), true, properties));
+
+    String content = Files.readString(file, StandardCharsets.UTF_8);
+    List<CalendarVO> list = JSON.parseArray(content, CalendarVO.class);
+    assertTrue(list.stream().anyMatch(v -> "2024-01-01".equals(v.getDate())));
+  }
+
+  /** 目标文件不存在时 updateFile 返回 false */
+  @Test
+  void updateFileReturnsFalseWhenFileMissing(@TempDir Path tempDir) {
+    properties.setType("local");
+    properties.setPath(tempDir.resolve("missing.json").toAbsolutePath().toString());
+    assertFalse(HolidayFix.updateFile(properties));
   }
 }

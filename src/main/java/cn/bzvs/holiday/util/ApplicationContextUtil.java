@@ -33,6 +33,9 @@ public class ApplicationContextUtil implements ApplicationContextAware {
    * @return bean实例
    */
   public static Object getBean(String beanId) throws BeansException {
+    if (applicationContext == null) {
+      throw new IllegalStateException("Spring 上下文未初始化，无法获取 Bean");
+    }
     return applicationContext.getBean(beanId);
   }
 
@@ -44,6 +47,9 @@ public class ApplicationContextUtil implements ApplicationContextAware {
    * @return bean实例
    */
   public static <T> T getBean(Class<T> clazz) throws BeansException {
+    if (applicationContext == null) {
+      throw new IllegalStateException("Spring 上下文未初始化，无法获取 Bean");
+    }
     return applicationContext.getBean(clazz);
   }
 }
