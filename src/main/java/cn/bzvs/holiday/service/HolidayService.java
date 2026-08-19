@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.Date;
 import java.util.Map;
 
@@ -20,8 +21,9 @@ import java.util.Map;
  */
 public class HolidayService {
 
-  /** 日期格式 */
-  private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  /** 日期格式（严格解析模式：非法日期如 2023-02-30 会直接抛异常而非静默钳制） */
+  private static final DateTimeFormatter FORMAT =
+      DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
 
   /**
    * 获取指定日期的节假日信息
@@ -194,7 +196,8 @@ public class HolidayService {
     String date = localDate.format(FORMAT);
     Map<String, CalendarVO> voMap = ConstantData.getAllDateMap();
     CalendarVO vo = voMap.get(date);
-    if (vo != null) {
+    // status 为空视为无效缓存数据，按自然星期兜底
+    if (vo != null && vo.getStatus() != null) {
       return vo.getStatus();
     }
     int dow = localDate.getDayOfWeek().getValue();
@@ -212,7 +215,8 @@ public class HolidayService {
     Map<String, CalendarVO> voMap = ConstantData.getAllDateMap();
     int dayOfWeek = localDate.getDayOfWeek().getValue();
     CalendarVO vo = voMap.get(date);
-    if (vo != null) {
+    // status 为空视为无效缓存数据，按自然星期兜底
+    if (vo != null && vo.getStatus() != null) {
       return new CalendarInfoVO(vo.getDate(), dayOfWeek, vo.getStatus());
     }
     int status = dayOfWeek < 6 ? DayType.WORKDAY.getCode() : DayType.WEEKEND.getCode();

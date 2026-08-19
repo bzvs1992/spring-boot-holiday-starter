@@ -2,6 +2,7 @@ package cn.bzvs.holiday;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import cn.bzvs.holiday.autoconfigure.ConstantData;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,5 +106,17 @@ class HolidayTest {
     assertTrue(holidayService.isWeekend("2030-01-05"));
     // 2030-01-07 为周一（缓存外），应判定为工作日
     assertTrue(holidayService.isWorkDay("2030-01-07"));
+  }
+
+  /** 非法日期（如 2023-02-30）严格解析时应抛出 DateTimeParseException */
+  @Test
+  void invalidDateThrowsException() {
+    assertThrows(DateTimeParseException.class, () -> holidayService.isHoliday("2023-02-30"));
+  }
+
+  /** 补班测试：补班日走 LocalDate 重载，同样属于工作日 */
+  @Test
+  void compensateWorkDayViaLocalDate() {
+    assertTrue(holidayService.isWorkDay(LocalDate.of(2023, 10, 7)));
   }
 }
