@@ -1,6 +1,7 @@
 package cn.bzvs.holiday.entity.vo;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.Getter;
 
 /**
@@ -39,15 +40,39 @@ public class CalendarInfoVO extends CalendarVO {
    * @param status 状态码，0-工作日 1-周末 2-补班 3-节假日
    */
   public CalendarInfoVO(String date, Integer dayOfWeek, Integer status) {
+    // 构造器入口判空，避免后续拆箱抛出裸 NPE
+    Objects.requireNonNull(date, "date 不能为空");
+    Objects.requireNonNull(dayOfWeek, "dayOfWeek 不能为空");
+    Objects.requireNonNull(status, "status 不能为空");
     LocalDate localDate = LocalDate.parse(date);
-    setDate(date);
-    setStatus(status);
+    super.setDate(date);
+    super.setStatus(status);
     this.year = localDate.getYear();
     this.month = localDate.getMonthValue();
     this.day = localDate.getDayOfMonth();
     this.dayOfWeek = dayOfWeek;
     this.dayOfWeekStr = toDayOfWeekStr(dayOfWeek);
     this.remark = DayType.fromCode(status).getRemark();
+  }
+
+  /**
+   * 不可变对象禁止修改日期
+   *
+   * @param date 日期
+   */
+  @Override
+  public void setDate(String date) {
+    throw new UnsupportedOperationException("CalendarInfoVO 不可变，禁止修改 date");
+  }
+
+  /**
+   * 不可变对象禁止修改状态
+   *
+   * @param status 状态码
+   */
+  @Override
+  public void setStatus(Integer status) {
+    throw new UnsupportedOperationException("CalendarInfoVO 不可变，禁止修改 status");
   }
 
   /**

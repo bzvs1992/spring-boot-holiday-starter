@@ -23,16 +23,19 @@ class DayTypeTest {
     assertEquals(DayType.HOLIDAY, DayType.fromCode(3));
   }
 
-  /** fromCode 对未知状态码抛出异常 */
+  /** fromCode 对未知状态码（超出范围、负数）抛出异常 */
   @Test
   void fromCodeThrowsOnUnknownCode() {
     assertThrows(IllegalArgumentException.class, () -> DayType.fromCode(9));
+    assertThrows(IllegalArgumentException.class, () -> DayType.fromCode(-1));
   }
 
   /** 枚举中文描述正确 */
   @Test
   void remarkIsCorrect() {
-    assertEquals("节假日", DayType.HOLIDAY.getRemark());
+    assertEquals("工作日", DayType.WORKDAY.getRemark());
+    assertEquals("周末", DayType.WEEKEND.getRemark());
     assertEquals("补班", DayType.COMPENSATE_WORK.getRemark());
+    assertEquals("节假日", DayType.HOLIDAY.getRemark());
   }
 }
