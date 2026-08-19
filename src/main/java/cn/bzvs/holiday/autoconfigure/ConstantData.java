@@ -28,22 +28,32 @@ public class ConstantData {
   /**
    * 全量初始化：构建新数据后原子替换，并发读不会读到空窗口
    *
+   * <p>与 setDayInfoAll 共用类锁互斥，防止运行时 reset 与 fix 并发时产生丢失更新竞态。列表内出现重复日期视为数据错误，快速失败。
+   *
    * @param calendarVOList 对象列表
+   * @throws IllegalStateException 列表内存在重复日期时抛出
    */
-  public static void init(List<CalendarVO> calendarVOList) {
+  public static synchronized void init(List<CalendarVO> calendarVOList) {
     allDateMap =
-        calendarVOList.stream()
-            .collect(Collectors.toMap(CalendarVO::getDate, Function.identity()));
+        Collections.unmodifiableMap(
+            calendarVOList.stream()
+                .collect(Collectors.toMap(CalendarVO::getDate, Function.identity())));
   }
 
   /**
-   * 增量合并数据
+   * 增量合并数据：与已有缓存的同日期数据按修复语义覆盖
+   *
+   * <p>输入列表内出现重复日期视为数据错误，快速失败。
    *
    * @param calendarVOList 对象列表
+   * @throws IllegalStateException 列表内存在重复日期时抛出
    */
   public static synchronized void setDayInfoAll(List<CalendarVO> calendarVOList) {
+    Map<String, CalendarVO> inputMap =
+        calendarVOList.stream()
+            .collect(Collectors.toMap(CalendarVO::getDate, Function.identity()));
     Map<String, CalendarVO> merged = new HashMap<>(allDateMap);
-    calendarVOList.forEach(vo -> merged.put(vo.getDate(), vo));
+    merged.putAll(inputMap);
     allDateMap = Collections.unmodifiableMap(merged);
   }
 
@@ -53,6 +63,6 @@ public class ConstantData {
    * @return Map<String, CalendarVO> 对象MAP
    */
   public static Map<String, CalendarVO> getAllDateMap() {
-    return Collections.unmodifiableMap(allDateMap);
+    return allDateMap;
   }
 }

@@ -47,4 +47,33 @@ class ConstantDataTest {
         UnsupportedOperationException.class,
         () -> map.put("2024-01-02", vo("2024-01-02", 1)));
   }
+
+  /** setDayInfoAll 增量合并：新日期追加，旧数据保留 */
+  @Test
+  void setDayInfoAllMergesData() {
+    ConstantData.init(List.of(vo("2024-01-01", 3)));
+    ConstantData.setDayInfoAll(List.of(vo("2024-05-01", 3)));
+    Map<String, CalendarVO> map = ConstantData.getAllDateMap();
+    assertEquals(2, map.size());
+    assertNotNull(map.get("2024-01-01"));
+    assertNotNull(map.get("2024-05-01"));
+  }
+
+  /** setDayInfoAll 同日期覆盖：修复语义生效 */
+  @Test
+  void setDayInfoAllOverridesSameDate() {
+    ConstantData.init(List.of(vo("2024-01-01", 3)));
+    ConstantData.setDayInfoAll(List.of(vo("2024-01-01", 1)));
+    Map<String, CalendarVO> map = ConstantData.getAllDateMap();
+    assertEquals(1, map.size());
+    assertEquals(1, map.get("2024-01-01").getStatus());
+  }
+
+  /** setDayInfoAll 输入内重复日期快速失败 */
+  @Test
+  void setDayInfoAllThrowsOnDuplicateInput() {
+    assertThrows(
+        IllegalStateException.class,
+        () -> ConstantData.setDayInfoAll(List.of(vo("2024-01-01", 3), vo("2024-01-01", 1))));
+  }
 }
